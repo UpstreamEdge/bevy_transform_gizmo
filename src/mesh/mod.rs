@@ -32,6 +32,10 @@ pub fn build_gizmo(
         radius: 0.04,
         half_length: axis_length * 0.5f32,
     }));
+    let arrow_tail_mesh_short = meshes.add(Mesh::from(Capsule3d {
+        radius: 0.04,
+        half_length: axis_length * 0.33f32,
+    }));
     let cone_mesh = meshes.add(Mesh::from(cone::Cone {
         height: 0.25,
         radius: 0.10,
@@ -84,11 +88,11 @@ pub fn build_gizmo(
             ));
             parent.spawn((
                 MaterialMeshBundle {
-                    mesh: arrow_tail_mesh.clone(),
+                    mesh: arrow_tail_mesh_short.clone(),
                     material: gizmo_matl_y.clone(),
                     transform: Transform::from_matrix(Mat4::from_rotation_translation(
                         Quat::from_rotation_y(std::f32::consts::PI / 2.0),
-                        Vec3::new(0.0, axis_length / 2.0, 0.0),
+                        Vec3::new(0.0, axis_length / 3.0, 0.0),
                     )),
                     ..Default::default()
                 },
@@ -161,7 +165,7 @@ pub fn build_gizmo(
                 MaterialMeshBundle {
                     mesh: cone_mesh.clone(),
                     material: gizmo_matl_y_sel.clone(),
-                    transform: Transform::from_translation(Vec3::new(0.0, axis_length, 0.0)),
+                    transform: Transform::from_translation(Vec3::new(0.0, axis_length * 2./3., 0.0)),
                     ..Default::default()
                 },
                 PickableGizmo::default(),
