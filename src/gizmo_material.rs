@@ -20,9 +20,7 @@ pub struct GizmoMaterial {
 
 impl From<Color> for GizmoMaterial {
     fn from(color: Color) -> Self {
-        GizmoMaterial {
-            color: color.into(),
-        }
+        GizmoMaterial { color: color.into() }
     }
 }
 

@@ -28,17 +28,21 @@ pub fn build_gizmo(
     let plane_size = axis_length * 0.25;
     let plane_offset = plane_size / 2. + axis_length * 0.2;
     // Define gizmo meshes
-    let arrow_tail_mesh = meshes.add(Capsule3d {
+    let arrow_tail_mesh = meshes.add(Mesh::from(Capsule3d {
         radius: 0.04,
         half_length: axis_length * 0.5f32,
-    });
-    let cone_mesh = meshes.add(cone::Cone {
+    }));
+    let arrow_tail_mesh_short = meshes.add(Mesh::from(Capsule3d {
+        radius: 0.04,
+        half_length: axis_length * 0.33f32,
+    }));
+    let cone_mesh = meshes.add(Mesh::from(cone::Cone {
         height: 0.25,
         radius: 0.10,
         ..Default::default()
-    });
-    let plane_mesh = meshes.add(Plane3d::default().mesh().size(plane_size, plane_size));
-    let sphere_mesh = meshes.add(Sphere { radius: 0.2 });
+    }));
+    let plane_mesh = meshes.add(Mesh::from(Plane3d::default().mesh().size(plane_size, plane_size)));
+    let sphere_mesh = meshes.add(Mesh::from(Sphere { radius: 0.2 }));
     let rotation_mesh = meshes.add(Mesh::from(truncated_torus::TruncatedTorus {
         radius: arc_radius,
         ring_radius: 0.04,
@@ -84,11 +88,11 @@ pub fn build_gizmo(
             ));
             parent.spawn((
                 MaterialMeshBundle {
-                    mesh: arrow_tail_mesh.clone(),
+                    mesh: arrow_tail_mesh_short.clone(),
                     material: gizmo_matl_y.clone(),
                     transform: Transform::from_matrix(Mat4::from_rotation_translation(
                         Quat::from_rotation_y(std::f32::consts::PI / 2.0),
-                        Vec3::new(0.0, axis_length / 2.0, 0.0),
+                        Vec3::new(0.0, axis_length / 3.0, 0.0),
                     )),
                     ..Default::default()
                 },
@@ -161,7 +165,7 @@ pub fn build_gizmo(
                 MaterialMeshBundle {
                     mesh: cone_mesh.clone(),
                     material: gizmo_matl_y_sel.clone(),
-                    transform: Transform::from_translation(Vec3::new(0.0, axis_length, 0.0)),
+                    transform: Transform::from_translation(Vec3::new(0.0, axis_length * 2./3., 0.0)),
                     ..Default::default()
                 },
                 PickableGizmo::default(),
@@ -247,25 +251,25 @@ pub fn build_gizmo(
             ));
 
             // Rotation Arcs
-            parent.spawn((
-                MaterialMeshBundle {
-                    mesh: rotation_mesh.clone(),
-                    material: gizmo_matl_x.clone(),
-                    transform: Transform::from_rotation(Quat::from_axis_angle(
-                        Vec3::Z,
-                        f32::to_radians(90.0),
-                    )),
-                    ..Default::default()
-                },
-                RotationGizmo,
-                PickableGizmo::default(),
-                TransformGizmoInteraction::RotateAxis {
-                    original: Vec3::X,
-                    axis: Vec3::X,
-                },
-                NotShadowCaster,
-                RenderLayers::layer(12),
-            ));
+            // parent.spawn((
+            //     MaterialMeshBundle {
+            //         mesh: rotation_mesh.clone(),
+            //         material: gizmo_matl_x.clone(),
+            //         transform: Transform::from_rotation(Quat::from_axis_angle(
+            //             Vec3::Z,
+            //             f32::to_radians(90.0),
+            //         )),
+            //         ..Default::default()
+            //     },
+            //     RotationGizmo,
+            //     PickableGizmo::default(),
+            //     TransformGizmoInteraction::RotateAxis {
+            //         original: Vec3::X,
+            //         axis: Vec3::X,
+            //     },
+            //     NotShadowCaster,
+            //     RenderLayers::layer(12),
+            // ));
             parent.spawn((
                 MaterialMeshBundle {
                     mesh: rotation_mesh.clone(),
@@ -281,25 +285,25 @@ pub fn build_gizmo(
                 NotShadowCaster,
                 RenderLayers::layer(12),
             ));
-            parent.spawn((
-                MaterialMeshBundle {
-                    mesh: rotation_mesh.clone(),
-                    material: gizmo_matl_z.clone(),
-                    transform: Transform::from_rotation(
-                        Quat::from_axis_angle(Vec3::Z, f32::to_radians(90.0))
-                            * Quat::from_axis_angle(Vec3::X, f32::to_radians(90.0)),
-                    ),
-                    ..Default::default()
-                },
-                RotationGizmo,
-                PickableGizmo::default(),
-                TransformGizmoInteraction::RotateAxis {
-                    original: Vec3::Z,
-                    axis: Vec3::Z,
-                },
-                NotShadowCaster,
-                RenderLayers::layer(12),
-            ));
+            // parent.spawn((
+            //     MaterialMeshBundle {
+            //         mesh: rotation_mesh.clone(),
+            //         material: gizmo_matl_z.clone(),
+            //         transform: Transform::from_rotation(
+            //             Quat::from_axis_angle(Vec3::Z, f32::to_radians(90.0))
+            //                 * Quat::from_axis_angle(Vec3::X, f32::to_radians(90.0)),
+            //         ),
+            //         ..Default::default()
+            //     },
+            //     RotationGizmo,
+            //     PickableGizmo::default(),
+            //     TransformGizmoInteraction::RotateAxis {
+            //         original: Vec3::Z,
+            //         axis: Vec3::Z,
+            //     },
+            //     NotShadowCaster,
+            //     RenderLayers::layer(12),
+            // ));
         });
 
     commands.spawn((
