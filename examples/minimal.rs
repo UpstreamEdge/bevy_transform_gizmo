@@ -1,6 +1,5 @@
 use bevy::{prelude::*, window::PresentMode};
 use bevy_transform_gizmo::TransformGizmoPlugin;
-use bevy_transform_gizmo::GizmoTransformable;
 
 fn main() {
     App::new()

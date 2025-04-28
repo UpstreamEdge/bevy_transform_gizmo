@@ -17,7 +17,11 @@ pub fn transform_gizmo_picking(
     q_gizmo_parts: Query<(), Without<TransformGizmoPart>>,
 ) {
     let (camera_entity, camera) = *q_camera;
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
+    let Ok(camera_transform) = q_transform.get(camera_entity) else {
+        warn!("TransformGizmo: Camera entity not found for picking. Ensure the camera is spawned before the picking system runs.");
+        return;
+    };
+
     let Some(cursor_position) = windows.cursor_position() else {
         return;
     };

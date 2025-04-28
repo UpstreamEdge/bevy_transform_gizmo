@@ -1,6 +1,7 @@
 #![forbid(unsafe_code)]
 #![allow(
     clippy::type_complexity,
+    clippy::too_many_arguments,
 )]
 #![deny(
     clippy::todo,

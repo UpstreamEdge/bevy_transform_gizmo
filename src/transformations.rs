@@ -22,13 +22,21 @@ pub fn transform_axis(
 
     let handle_entity = drag.entity();
 
-    let parent_entity = q_parents.get(handle_entity).unwrap().get();
+    let Ok(parent_entity) = q_parents.get(handle_entity) else {
+        warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        return;
+    };
+    let parent_entity = parent_entity.get();
 
-    let gismo_transform = q_transform.get(handle_entity).unwrap();
+    let Ok(gismo_transform) = q_transform.get(handle_entity) else {
+        warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        return;
+    };
 
-    // let parent_transform = q_transform.get(parent_entity).unwrap();
-
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
+    let Ok(camera_transform) = q_transform.get(camera_entity) else {
+        warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        return;
+    };
 
     let direction = gismo_transform.up();
     let direction_plane = gismo_transform.forward();
@@ -70,13 +78,19 @@ pub fn transform_axis(
     let result = delta_vector.project_onto(*direction);
 
     // Set the transforamtion
-    let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
-    parent_transform_local.translation += result;
+    if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
+        parent_transform_local.translation += result;
+    } else {
+        warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+    }
 
     // Set the Transformation to the connected Object
     if let Some(sel_entity) = selection.entity {
-        let mut selection_transform_local = q_local_transform.get_mut(sel_entity).unwrap();
-        selection_transform_local.translation += result;
+        if let Ok(mut selection_transform_local) = q_local_transform.get_mut(sel_entity) {
+            selection_transform_local.translation += result;
+        } else {
+            warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+        }
     }
 }
 
@@ -99,14 +113,21 @@ pub fn transform_plane(
 
     let handle_entity = drag.entity();
 
-    let parent_entity = q_parents.get(handle_entity).unwrap().get();
+    let Ok(parent_entity) = q_parents.get(handle_entity) else {
+        warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        return;
+    };
+    let parent_entity = parent_entity.get();
 
-    let gismo_transform = q_transform.get(handle_entity).unwrap();
+    let Ok(gismo_transform) = q_transform.get(handle_entity) else {
+        warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        return;
+    };
 
-    // let parent_transform = q_transform.get(parent_entity).unwrap();
-
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
-
+    let Ok(camera_transform) = q_transform.get(camera_entity) else {
+        warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        return;
+    };
 
     let axis_1 = Vec3::from(gismo_transform.forward());
     let axis_2 = Vec3::from(gismo_transform.right());
@@ -150,13 +171,19 @@ pub fn transform_plane(
     let result = delta_vector.project_onto(axis_1) + delta_vector.project_onto(axis_2);
 
     // Set the transforamtion
-    let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
-    parent_transform_local.translation += result;
+    if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
+        parent_transform_local.translation += result;
+    } else {
+        warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+    }
 
     // Set the Transformation to the connected Object
     if let Some(sel_entity) = selection.entity {
-        let mut selection_transform_local = q_local_transform.get_mut(sel_entity).unwrap();
-        selection_transform_local.translation += result;
+        if let Ok(mut selection_transform_local) = q_local_transform.get_mut(sel_entity) {
+            selection_transform_local.translation += result;
+        } else {
+            warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+        }
     }
 }
 
@@ -178,13 +205,21 @@ pub fn transform_camera_plane(
 
     let handle_entity = drag.entity();
 
-    let parent_entity = q_parents.get(handle_entity).unwrap().get();
+    let Ok(parent_entity) = q_parents.get(handle_entity) else {
+        warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        return;
+    };
+    let parent_entity = parent_entity.get();
 
-    let gismo_transform = q_transform.get(handle_entity).unwrap();
+    let Ok(gismo_transform) = q_transform.get(handle_entity) else {
+        warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        return;
+    };
 
-    // let parent_transform = q_transform.get(parent_entity).unwrap();
-
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
+    let Ok(camera_transform) = q_transform.get(camera_entity) else {
+        warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        return;
+    };
 
     let Some(cursor_position) = windows.cursor_position() else {
         return;
@@ -229,13 +264,19 @@ pub fn transform_camera_plane(
     let result = delta_vector.project_onto(axis_1) + delta_vector.project_onto(axis_2);
 
     // Set the transforamtion
-    let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
-    parent_transform_local.translation += result;
+    if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
+        parent_transform_local.translation += result;
+    } else {
+        warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+    }
 
     // Set the Transformation to the connected Object
     if let Some(sel_entity) = selection.entity {
-        let mut selection_transform_local = q_local_transform.get_mut(sel_entity).unwrap();
-        selection_transform_local.translation += result;
+        if let Ok(mut selection_transform_local) = q_local_transform.get_mut(sel_entity) {
+            selection_transform_local.translation += result;
+        } else {
+            warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+        }
     }
 }
 
@@ -259,13 +300,21 @@ pub fn transform_rotation(
 
     let handle_entity = drag.entity();
 
-    let parent_entity = q_parents.get(handle_entity).unwrap().get();
+    let Ok(parent_entity) = q_parents.get(handle_entity) else {
+        warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        return;
+    };
+    let parent_entity = parent_entity.get();
 
-    let gismo_transform = q_transform.get(handle_entity).unwrap();
+    let Ok(gismo_transform) = q_transform.get(handle_entity) else {
+        warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        return;
+    };
 
-    // let parent_transform = q_transform.get(parent_entity).unwrap();
-
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
+    let Ok(camera_transform) = q_transform.get(camera_entity) else {
+        warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        return;
+    };
 
 
     let axis_1 = Vec3::from(gismo_transform.up());
@@ -318,8 +367,11 @@ pub fn transform_rotation(
     let angle_diff = angle_side-angle_side_2;
 
     // Set the transforamtion
-    let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
-    parent_transform_local.rotate(Quat::from_axis_angle(axis_1, angle_diff));
+    if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
+        parent_transform_local.rotate(Quat::from_axis_angle(axis_1, angle_diff));
+    } else {
+        warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+    }
 
     // Set the Transformation to the connected Object
     if let Some(sel_entity) = selection.entity {

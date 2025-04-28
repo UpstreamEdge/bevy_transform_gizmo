@@ -19,15 +19,19 @@ pub fn normalize(
     mut q_transform: Query<(Entity, &mut Transform, &Normalize3d), With <Normalize3d>>,
     q_global_transform: Query<&GlobalTransform>,
 ){
-
     for (entity, mut transform, normalize) in q_transform.iter_mut() {
-
         let (camera_entity, camera) = *q_camera;
 
-        let camera_transform =  q_global_transform.get(camera_entity).unwrap();
+        let Ok(camera_transform) = q_global_transform.get(camera_entity) else {
+            warn!("Camera entity not found for normalization. Ensure the camera is spawned before the normalization system runs.");
+            continue;
+        };
         let view = camera_transform.compute_matrix().inverse();
 
-        let global_transform = q_global_transform.get(entity).unwrap();
+        let Ok(global_transform) = q_global_transform.get(entity) else {
+            warn!("Entity {:?} not found for normalization. Ensure the entity exists in the world.", entity);
+            continue;
+        };
 
         let distance = view.transform_point3(global_transform.translation()).z;
         let gt = global_transform.compute_transform();

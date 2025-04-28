@@ -25,17 +25,14 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    // plane
+    // Plane
     commands.spawn((
         Mesh3d(meshes.add(Plane3d::default().mesh().size(10.0, 10.0))),
         MeshMaterial3d(materials.add(Color::srgb(0.3, 0.5, 0.3))),
         // bevy_transform_gizmo::GizmoTransformable, // Not Mandatory because of  "use_tag_filter= false"
     ));
 
-    let tan = Color::srgb_u8(204, 178, 153);
-    let red = Color::srgb_u8(127, 26, 26);
-
-    // cube
+    // Cube
     commands
         .spawn((
                 Mesh3d(meshes.add(Cuboid::from_size(Vec3::splat(1.0)))),
