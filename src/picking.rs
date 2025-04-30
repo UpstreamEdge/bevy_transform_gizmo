@@ -11,7 +11,7 @@ pub fn transform_gizmo_picking(
     mouse_input: Res<ButtonInput<MouseButton>>,
     mut materials_3d: Query<&mut MeshMaterial3d<StandardMaterial>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
-    mut gizmo_ressource: ResMut<TransformGizmoRessource>,
+    mut gizmo_resource: ResMut<TransformGizmoResource>,
     mut q_gizmo: Single<&mut Transform, With<TransformGizmo>>,
     q_tagged: Query<(), With<GizmoTransformable>>,
     q_gizmo_parts: Query<(), Without<TransformGizmoPart>>,
@@ -47,8 +47,7 @@ pub fn transform_gizmo_picking(
         .with_visibility(visibility);
 
     // Allow only tagged Components to be found;
-    if gizmo_ressource.use_tag_filter {
-
+    if gizmo_resource.use_tag_filter {
         settings = settings.with_filter(&filter);
     }
 
@@ -56,23 +55,23 @@ pub fn transform_gizmo_picking(
         return;
     };
 
-    if mouse_input.just_released(gizmo_ressource.selection_button){
-        if let Some(last_selection) = gizmo_ressource.entity {
+    if mouse_input.just_released(gizmo_resource.selection_button){
+        if let Some(last_selection) = gizmo_resource.entity {
             // Reset Last Selection
 
             let Ok(mut material) = materials_3d.get_mut(last_selection) else {
                 warn!("TransformGizmo: Could not get Material of last selected Entity: {:?}", last_selection);
                 return;
             };
-            if let Some(original_color) = gizmo_ressource.original_color.clone() {
+            if let Some(original_color) = gizmo_resource.original_color.clone() {
                 material.0 = original_color;
             } else {
                 warn!("TransformGizmo: No original color found for last selected Entity: {:?}", last_selection);
             }
 
-            gizmo_ressource.origin = None;
-            gizmo_ressource.entity = None;
-            gizmo_ressource.original_color = None;
+            gizmo_resource.origin = None;
+            gizmo_resource.entity = None;
+            gizmo_resource.original_color = None;
         }
 
         let Ok(mut material) = materials_3d.get_mut(*hit_entity) else {
@@ -85,11 +84,11 @@ pub fn transform_gizmo_picking(
         };
 
         // Store the active Entity
-        gizmo_ressource.entity = Some(*hit_entity);
-        gizmo_ressource.original_color = Some(material.0.clone());
-        gizmo_ressource.origin = Some(*hit_entity_transform);
+        gizmo_resource.entity = Some(*hit_entity);
+        gizmo_resource.original_color = Some(material.0.clone());
+        gizmo_resource.origin = Some(*hit_entity_transform);
 
-        let pressed_matl = materials.add(gizmo_ressource.selection_color);
+        let pressed_matl = materials.add(gizmo_resource.selection_color);
         material.0 = pressed_matl;
 
         // Attach the TransformGizmo to it

@@ -12,7 +12,7 @@ pub fn transform_axis(
     mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
     q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
-    selection: ResMut<TransformGizmoRessource>,
+    selection: ResMut<TransformGizmoResource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -102,7 +102,7 @@ pub fn transform_plane(
     mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
     q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
-    selection: ResMut<TransformGizmoRessource>,
+    selection: ResMut<TransformGizmoResource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -195,7 +195,7 @@ pub fn transform_camera_plane(
     mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
     q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
-    selection: ResMut<TransformGizmoRessource>,
+    selection: ResMut<TransformGizmoResource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -289,7 +289,7 @@ pub fn transform_rotation(
     mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
     q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
-    selection: ResMut<TransformGizmoRessource>,
+    selection: ResMut<TransformGizmoResource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {

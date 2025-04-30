@@ -51,7 +51,7 @@ pub struct GizmoTransformable;
 pub struct TransformGizmoPart;
 
 #[derive(Resource)]
-pub struct TransformGizmoRessource{
+pub struct TransformGizmoResource {
     pub entity: Option<Entity>,
     pub original_color: Option<Handle<StandardMaterial>>,
     pub origin: Option<GlobalTransform>,
@@ -61,7 +61,7 @@ pub struct TransformGizmoRessource{
     pub drag_button: PointerButton,
 }
 
-impl Default for TransformGizmoRessource {
+impl Default for TransformGizmoResource {
     fn default() -> Self {
         Self {
             entity: None,
@@ -75,7 +75,7 @@ impl Default for TransformGizmoRessource {
     }
 }
 
-pub struct TransformGizmoPlugin{
+pub struct TransformGizmoPlugin {
     pub use_tag_filter: bool,
     pub selection_color: Color,
     pub selection_button: MouseButton,
@@ -102,7 +102,7 @@ impl Plugin for TransformGizmoPlugin {
             Shader::from_wgsl
         );
 
-        let resource = TransformGizmoRessource{
+        let resource = TransformGizmoResource {
             use_tag_filter: self.use_tag_filter,
             selection_color:  self.selection_color,
             selection_button: self.selection_button,
