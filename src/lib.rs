@@ -11,10 +11,7 @@
     clippy::panic,
 )]
 
-use bevy::{
-    prelude::*,
-    color::palettes::tailwind::*,
-};
+use bevy::prelude::*;
 use bevy::asset::load_internal_asset;
 
 pub mod mesh;
@@ -31,8 +28,8 @@ use gizmo_component::*;
 mod gizmo_material;
 use gizmo_material::GizmoMaterial;
 
-pub mod normalization;
-use crate::normalization::*;
+// pub mod normalization;
+// use crate::normalization::*;
 
 #[derive(Component, Default, Clone, Debug)]
 pub struct InternalGizmoCamera;
@@ -50,49 +47,28 @@ pub struct GizmoTransformable;
 #[derive(Component)]
 pub struct TransformGizmoPart;
 
-#[derive(Resource)]
-pub struct TransformGizmoResource {
-    pub entity: Option<Entity>,
-    pub original_color: Option<Handle<StandardMaterial>>,
-    pub origin: Option<GlobalTransform>,
-    pub use_tag_filter: bool,
-    pub selection_color: Color,
-    pub selection_button: MouseButton,
-    pub drag_button: PointerButton,
+#[derive(Resource, Debug, Default)]
+pub struct TransformGizmoSettings {
+    pub active_entity: Option<Entity>,
+    pub is_dragging: bool,
+    pub(crate) origin: Option<GlobalTransform>,
 }
 
-impl Default for TransformGizmoResource {
-    fn default() -> Self {
-        Self {
-            entity: None,
-            original_color: None,
-            origin: None,
-            use_tag_filter: true,
-            selection_color: Color::from(YELLOW_300),
-            selection_button: MouseButton::Left,
-            drag_button: PointerButton::Primary,
-        }
+impl TransformGizmoSettings {
+    pub fn is_active(&self) -> bool {
+        self.active_entity.is_some()
+    }
+    pub fn is_dragging(&self) -> bool {
+        self.is_dragging
+    }
+    pub fn deselect(&mut self) {
+        self.active_entity = None;
+        self.is_dragging = false;
+        self.origin = None;
     }
 }
 
-pub struct TransformGizmoPlugin {
-    pub use_tag_filter: bool,
-    pub selection_color: Color,
-    pub selection_button: MouseButton,
-    pub drag_button: PointerButton,
-}
-
-impl Default for TransformGizmoPlugin {
-    fn default() -> Self {
-        Self {
-            use_tag_filter: false,
-            selection_color: Color::from(YELLOW_300),
-            selection_button: MouseButton::Left,
-            drag_button: PointerButton::Primary,
-        }
-    }
-}
-
+pub struct TransformGizmoPlugin;
 impl Plugin for TransformGizmoPlugin {
     fn build(&self, app: &mut App) {
         load_internal_asset!(
@@ -102,21 +78,15 @@ impl Plugin for TransformGizmoPlugin {
             Shader::from_wgsl
         );
 
-        let resource = TransformGizmoResource {
-            use_tag_filter: self.use_tag_filter,
-            selection_color:  self.selection_color,
-            selection_button: self.selection_button,
-            ..Default::default()
-        };
-
-        app.insert_resource(resource);
+        app.insert_resource(TransformGizmoSettings::default());
 
         app.add_plugins(MeshPickingPlugin);
         app.add_plugins(MaterialPlugin::<GizmoMaterial>::default());
 
         app.add_systems(PostStartup, build_gizmo);
+
         app.add_systems(Update, transform_gizmo_picking);
-        app.add_systems(PostUpdate,normalize);
+        // app.add_systems(PostUpdate,normalize);
         app.add_systems(PostUpdate,gizmo_cam_copy_settings);
 
     }

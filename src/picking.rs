@@ -9,9 +9,7 @@ pub fn transform_gizmo_picking(
     q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
     q_transform: Query<&GlobalTransform>,
     mouse_input: Res<ButtonInput<MouseButton>>,
-    mut materials_3d: Query<&mut MeshMaterial3d<StandardMaterial>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    mut gizmo_resource: ResMut<TransformGizmoResource>,
+    mut gizmo_settings: ResMut<TransformGizmoSettings>,
     mut q_gizmo: Single<&mut Transform, With<TransformGizmo>>,
     q_tagged: Query<(), With<GizmoTransformable>>,
     q_gizmo_parts: Query<(), Without<TransformGizmoPart>>,
@@ -41,55 +39,38 @@ pub fn transform_gizmo_picking(
     // Ignore the visibility of entities. This allows ray casting hidden entities.
     let visibility = RayCastVisibility::Any;
 
-    let mut settings = RayCastSettings::default()
+    let settings = RayCastSettings::default()
         .with_filter(&filter_gizmo_parts)
         .with_early_exit_test(&early_exit_test)
-        .with_visibility(visibility);
+        .with_visibility(visibility)
+        .with_filter(&filter);
 
-    // Allow only tagged Components to be found;
-    if gizmo_resource.use_tag_filter {
-        settings = settings.with_filter(&filter);
-    }
+    // // Allow only tagged Components to be found;
+    // if gizmo_resource.use_tag_filter {
+    //     settings = settings.with_filter(&filter);
+    // }
 
     let Some((hit_entity, _hit)) = ray_cast.cast_ray(ray, &settings).first() else {
         return;
     };
 
-    if mouse_input.just_released(gizmo_resource.selection_button){
-        if let Some(last_selection) = gizmo_resource.entity {
-            // Reset Last Selection
+    // if mouse_input.just_released(gizmo_resource.selection_button) {
+    if mouse_input.just_released(MouseButton::Left) {
+        // if gizmo_resource.entity.is_some() {
+        //     // Reset Last Selection
+        //     gizmo_resource.origin = None;
+        //     gizmo_resource.entity = None;
+        // }
+        gizmo_settings.deselect();
 
-            let Ok(mut material) = materials_3d.get_mut(last_selection) else {
-                warn!("TransformGizmo: Could not get Material of last selected Entity: {:?}", last_selection);
-                return;
-            };
-            if let Some(original_color) = gizmo_resource.original_color.clone() {
-                material.0 = original_color;
-            } else {
-                warn!("TransformGizmo: No original color found for last selected Entity: {:?}", last_selection);
-            }
-
-            gizmo_resource.origin = None;
-            gizmo_resource.entity = None;
-            gizmo_resource.original_color = None;
-        }
-
-        let Ok(mut material) = materials_3d.get_mut(*hit_entity) else {
-            warn!("TransformGizmo: Could not get Material of selected Entity: {:?}", hit_entity);
-            return;
-        };
         let Ok(hit_entity_transform) = q_transform.get(*hit_entity) else {
             warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", hit_entity);
             return;
         };
 
         // Store the active Entity
-        gizmo_resource.entity = Some(*hit_entity);
-        gizmo_resource.original_color = Some(material.0.clone());
-        gizmo_resource.origin = Some(*hit_entity_transform);
-
-        let pressed_matl = materials.add(gizmo_resource.selection_color);
-        material.0 = pressed_matl;
+        gizmo_settings.active_entity = Some(*hit_entity);
+        gizmo_settings.origin = Some(*hit_entity_transform);
 
         // Attach the TransformGizmo to it
         **q_gizmo = Transform::from_translation(hit_entity_transform.translation()).with_rotation(hit_entity_transform.rotation());

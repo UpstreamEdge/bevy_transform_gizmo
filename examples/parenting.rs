@@ -11,15 +11,13 @@ fn main() {
                 }),
                 ..default()
             }),
-            TransformGizmoPlugin{
-                use_tag_filter: false,
-                ..Default::default()},
+            TransformGizmoPlugin,
         ))
         .add_systems(Startup, setup)
         .run();
 }
 
-/// set up a simple 3D scene
+/// Aet up a simple 3D scene
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -29,7 +27,7 @@ fn setup(
     commands.spawn((
         Mesh3d(meshes.add(Plane3d::default().mesh().size(10.0, 10.0))),
         MeshMaterial3d(materials.add(Color::srgb(0.3, 0.5, 0.3))),
-        // bevy_transform_gizmo::GizmoTransformable, // Not Mandatory because of  "use_tag_filter= false"
+        bevy_transform_gizmo::GizmoTransformable,
     ));
 
     // Cube
@@ -38,19 +36,20 @@ fn setup(
                 Mesh3d(meshes.add(Cuboid::from_size(Vec3::splat(1.0)))),
                 MeshMaterial3d(materials.add(Color::srgb(0.4, 0.4, 0.4))),
                 Transform::from_xyz(-1.0, 0.0, 0.0),
+                bevy_transform_gizmo::GizmoTransformable,
             ))
         .with_children(|commands| {
             commands.spawn((
                     Mesh3d(meshes.add(Cuboid::from_size(Vec3::splat(1.0)))),
                     MeshMaterial3d(materials.add(Color::srgb(0.8, 0.8, 0.8))),
                     Transform::from_xyz(1.0, 0.0, 0.0),
-                    // bevy_transform_gizmo::GizmoTransformable, // Not Mandatory because of  "use_tag_filter= false"
+                    bevy_transform_gizmo::GizmoTransformable,
                 ));
                 commands.spawn((
                     Mesh3d(meshes.add(Cuboid::from_size(Vec3::splat(1.0)))),
                     MeshMaterial3d(materials.add(Color::srgb(1.0, 1.0,1.0))),
                     Transform::from_xyz(1.0, 1.0, 0.0),
-                    // bevy_transform_gizmo::GizmoTransformable, // Not Mandatory because of  "use_tag_filter= false"
+                    bevy_transform_gizmo::GizmoTransformable,
                 ));
         });
 

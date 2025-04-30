@@ -12,7 +12,7 @@ fn main() {
                 }),
                 ..default()
             }),
-            TransformGizmoPlugin::default(),
+            TransformGizmoPlugin,
         ))
         .add_systems(Startup, setup)
         .run();

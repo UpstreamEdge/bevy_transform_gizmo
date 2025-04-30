@@ -39,14 +39,14 @@ pub fn normalize(
         let Ok(pixel_root) = camera.world_to_viewport(
             &GlobalTransform::default(),
             Vec3::new(normalize.size_in_world * gt.scale.x, 0.0, distance),
-        )else {
+        ) else {
             continue;
         };
 
         let Ok(pixel_end) = camera.world_to_viewport(
             &GlobalTransform::default(),
             Vec3::new(0.0, 0.0, distance),
-        )else {
+        ) else {
             continue;
         };
 
