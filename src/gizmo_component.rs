@@ -54,7 +54,7 @@ pub fn build_gizmo(
     // Build the gizmo using the variables above.
     let parent = commands.spawn((
         Transform::from_xyz(0.0, 0.0, 0.0),
-        Visibility::default(),
+        Visibility::Hidden,
         RenderLayers::layer(12),
         TransformGizmo,
         // Normalize3d{

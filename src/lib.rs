@@ -86,9 +86,38 @@ impl Plugin for TransformGizmoPlugin {
         app.add_systems(PostStartup, build_gizmo);
 
         app.add_systems(Update, transform_gizmo_picking);
+        app.add_systems(Update,update_gizmo_visibility);
+        app.add_systems(Update,deactivate_gizmo_if_entity_does_not_exist);
+
         // app.add_systems(PostUpdate,normalize);
         app.add_systems(PostUpdate,gizmo_cam_copy_settings);
 
+    }
+}
+
+
+fn update_gizmo_visibility(
+    gizmo_settings: Res<TransformGizmoSettings>,
+    mut gizmo_query: Query<&mut Visibility, With<TransformGizmo>>,
+) {
+    if let Ok(mut visibility) = gizmo_query.get_single_mut() {
+        if gizmo_settings.is_active() {
+            *visibility = Visibility::Visible;
+        } else {
+            *visibility = Visibility::Hidden;
+        }
+    }
+}
+
+fn deactivate_gizmo_if_entity_does_not_exist(
+    mut commands: Commands,
+    mut gizmo_settings: ResMut<TransformGizmoSettings>,
+) {
+    if let Some(active_entity) = gizmo_settings.active_entity {
+        if commands.get_entity(active_entity).is_none() {
+            // If the active entity does not exist, deactivate the gizmo
+            gizmo_settings.deselect();
+        }
     }
 }
 
