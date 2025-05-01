@@ -18,6 +18,7 @@ pub fn transform_axis(
     if drag.button != PointerButton::Primary {
         return;
     }
+
     let (camera_entity, camera) = *q_camera;
 
     let handle_entity = drag.entity();
@@ -70,7 +71,7 @@ pub fn transform_axis(
 
     // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance_delta) =
-    ray_delta.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
+        ray_delta.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
     else {
         return;
     };
@@ -211,6 +212,7 @@ pub fn transform_camera_plane(
     if drag.button != PointerButton::Primary {
         return;
     }
+
     let (camera_entity, camera) = *q_camera;
 
     let handle_entity = drag.entity();
@@ -383,7 +385,7 @@ pub fn transform_rotation(
 
     let angle_diff = angle_side-angle_side_2;
 
-    // Set the transforamtion
+    // Set the transformation
     if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
         parent_transform_local.rotate(Quat::from_axis_angle(axis_1, angle_diff));
     } else {

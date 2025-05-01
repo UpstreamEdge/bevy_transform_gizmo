@@ -49,9 +49,10 @@ pub struct TransformGizmoPart;
 
 #[derive(Resource, Debug, Default)]
 pub struct TransformGizmoSettings {
-    pub active_entity: Option<Entity>,
-    pub is_dragging: bool,
+    pub(crate) active_entity: Option<Entity>,
+    pub(crate) is_dragging: bool,
     pub(crate) origin: Option<GlobalTransform>,
+    pub(crate) manual_selection_triggered: bool,
 }
 
 impl TransformGizmoSettings {
@@ -60,6 +61,11 @@ impl TransformGizmoSettings {
     }
     pub fn is_dragging(&self) -> bool {
         self.is_dragging
+    }
+    pub fn select(&mut self, entity: Entity, origin: GlobalTransform) {
+        self.active_entity = Some(entity);
+        self.origin = Some(origin);
+        self.manual_selection_triggered = true;
     }
     pub fn deselect(&mut self) {
         self.active_entity = None;

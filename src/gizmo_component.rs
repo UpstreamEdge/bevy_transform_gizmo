@@ -8,6 +8,8 @@ use bevy::{
 use crate::*;
 // use crate::normalization::*;
 
+const TRANSFORM_GIZMO_RENDER_LAYER: usize = 12;
+
 
 /// Startup system that builds the procedural mesh and materials of the gizmo.
 pub fn build_gizmo(
@@ -55,7 +57,7 @@ pub fn build_gizmo(
     let parent = commands.spawn((
         Transform::from_xyz(0.0, 0.0, 0.0),
         Visibility::Hidden,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
         TransformGizmo,
         // Normalize3d{
         //     size_in_world: 1.5,
@@ -72,7 +74,7 @@ pub fn build_gizmo(
             Quat::from_rotation_z(std::f32::consts::PI / 2.0),
             Vec3::new(axis_length / 2.0, 0.0, 0.0),
         )),
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
         NotShadowCaster,
         TransformGizmoPart,
     )).id();
@@ -82,30 +84,30 @@ pub fn build_gizmo(
     commands.entity(translation_x_axis).observe(transform_axis);
 
     let translation_y_axis = commands.spawn((
-        Mesh3d(arrow_tail_mesh.clone()),
+        Mesh3d(arrow_tail_mesh_short.clone()),
         MeshMaterial3d(gizmo_matl_y.clone()),
         Transform::from_matrix(Mat4::from_rotation_translation(
             Quat::from_rotation_y(std::f32::consts::PI / 2.0),
-            Vec3::new(0.0, axis_length / 2.0, 0.0),
+            Vec3::new(0.0, axis_length / 3.0, 0.0),
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
     commands.entity(parent).add_children(&[translation_y_axis]);
     commands.entity(translation_y_axis).observe(transform_axis);
 
     let translation_z_axis = commands.spawn((
-        Mesh3d(arrow_tail_mesh_short.clone()),
+        Mesh3d(arrow_tail_mesh.clone()),
         MeshMaterial3d(gizmo_matl_z.clone()),
         Transform::from_matrix(Mat4::from_rotation_translation(
             Quat::from_rotation_x(std::f32::consts::PI / 2.0),
-            Vec3::new(0.0, 0.0, axis_length / 3.0),
+            Vec3::new(0.0, 0.0, axis_length / 2.0),
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
     commands.entity(parent).add_children(&[translation_z_axis]);
@@ -121,7 +123,7 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
     commands.entity(parent).add_children(&[translation_x_handle]);
@@ -136,7 +138,7 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
     commands.entity(parent).add_children(&[translation_x_plane]);
@@ -146,11 +148,10 @@ pub fn build_gizmo(
     let translation_y_handle = commands.spawn((
         Mesh3d(cone_mesh.clone()),
         MeshMaterial3d(gizmo_matl_y_sel.clone()),
-        Transform::from_translation(Vec3::new(0.0, axis_length, 0.0)),
+        Transform::from_translation(Vec3::new(0.0, axis_length * 0.667, 0.0)),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
-
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
     commands.entity(parent).add_children(&[translation_y_handle]);
@@ -167,7 +168,7 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
     commands.entity(parent).add_children(&[translation_y_plane]);
@@ -178,11 +179,11 @@ pub fn build_gizmo(
         MeshMaterial3d(gizmo_matl_z_sel.clone()),
         Transform::from_matrix(Mat4::from_rotation_translation(
             Quat::from_rotation_x(std::f32::consts::PI / 2.0),
-            Vec3::new(0.0, 0.0, axis_length * 0.667),
+            Vec3::new(0.0, 0.0, axis_length),
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
     commands.entity(parent).add_children(&[translation_z_handle]);
@@ -197,7 +198,7 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
     commands.entity(parent).add_children(&[translation_z_plane]);
@@ -208,7 +209,7 @@ pub fn build_gizmo(
         MeshMaterial3d(gizmo_matl_v_sel.clone()),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
     commands.entity(parent).add_children(&[handle]);
@@ -225,38 +226,38 @@ pub fn build_gizmo(
     //     )),
     //     NotShadowCaster,
     //     TransformGizmoPart,
-    //     RenderLayers::layer(12),
+    //     RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     // )).id();
 
     // commands.entity(parent).add_children(&[rotation_x_arc]);
     // commands.entity(rotation_x_arc).observe(transform_rotation);
 
 
-    // let rotation_y_arc = commands.spawn((
-    //     Mesh3d(rotation_mesh.clone()),
-    //     MeshMaterial3d(gizmo_matl_y.clone()),
-    //     NotShadowCaster,
-    //     TransformGizmoPart,
-    //     RenderLayers::layer(12),
-    // )).id();
-
-    // commands.entity(parent).add_children(&[rotation_y_arc]);
-    // commands.entity(rotation_y_arc).observe(transform_rotation);
-
-    let rotation_z_arc = commands.spawn((
+    let rotation_y_arc = commands.spawn((
         Mesh3d(rotation_mesh.clone()),
-        MeshMaterial3d(gizmo_matl_z.clone()),
-        Transform::from_rotation(
-            Quat::from_axis_angle(Vec3::Z, f32::to_radians(90.0))
-                * Quat::from_axis_angle(Vec3::X, f32::to_radians(90.0)),
-        ),
+        MeshMaterial3d(gizmo_matl_y.clone()),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
 
-    commands.entity(parent).add_children(&[rotation_z_arc]);
-    commands.entity(rotation_z_arc).observe(transform_rotation);
+    commands.entity(parent).add_children(&[rotation_y_arc]);
+    commands.entity(rotation_y_arc).observe(transform_rotation);
+
+    // let rotation_z_arc = commands.spawn((
+    //     Mesh3d(rotation_mesh.clone()),
+    //     MeshMaterial3d(gizmo_matl_z.clone()),
+    //     Transform::from_rotation(
+    //         Quat::from_axis_angle(Vec3::Z, f32::to_radians(90.0))
+    //             * Quat::from_axis_angle(Vec3::X, f32::to_radians(90.0)),
+    //     ),
+    //     NotShadowCaster,
+    //     TransformGizmoPart,
+    //     RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
+    // )).id();
+
+    // commands.entity(parent).add_children(&[rotation_z_arc]);
+    // commands.entity(rotation_z_arc).observe(transform_rotation);
 
     commands.spawn((
         Camera3d {
@@ -268,6 +269,6 @@ pub fn build_gizmo(
             ..default()
         },
         InternalGizmoCamera,
-        RenderLayers::layer(12),
+        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     ));
 }

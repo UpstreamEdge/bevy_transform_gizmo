@@ -32,45 +32,61 @@ pub fn transform_gizmo_picking(
         return;
     };
 
-    // Calculate a ray pointing from the camera into the world based on the cursor's position.
-    let Ok(ray) = camera.viewport_to_world(camera_transform, cursor_position) else {
-        return;
-    };
-
-    let filter_gizmo_parts = |entity| q_gizmo_parts.contains(entity);
-
-    let filter = |entity| q_tagged.contains(entity);
-
-    // Never early-exit. Note that you can change behavior per-entity.
-    let early_exit_test = |_entity| false;
-
-    // Ignore the visibility of entities. This allows ray casting hidden entities.
-    let visibility = RayCastVisibility::Any;
-
-    let settings = RayCastSettings::default()
-        .with_filter(&filter_gizmo_parts)
-        .with_early_exit_test(&early_exit_test)
-        .with_visibility(visibility)
-        .with_filter(&filter);
-
-    let Some((hit_entity, _hit)) = ray_cast.cast_ray(ray, &settings).first() else {
-        return;
-    };
-
-    // if mouse_input.just_released(gizmo_resource.selection_button) {
-    if mouse_input.just_released(MouseButton::Left) {
-        gizmo_settings.deselect();
-
-        let Ok(hit_entity_transform) = q_transform.get(*hit_entity) else {
-            warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", hit_entity);
+    if !gizmo_settings.manual_selection_triggered {
+        // Calculate a ray pointing from the camera into the world based on the cursor's position.
+        let Ok(ray) = camera.viewport_to_world(camera_transform, cursor_position) else {
             return;
         };
 
-        // Store the active Entity
-        gizmo_settings.active_entity = Some(*hit_entity);
-        gizmo_settings.origin = Some(*hit_entity_transform);
+        let filter_gizmo_parts = |entity| q_gizmo_parts.contains(entity);
 
-        // Attach the TransformGizmo to it
-        **q_gizmo = Transform::from_translation(hit_entity_transform.translation()).with_rotation(hit_entity_transform.rotation());
+        let filter = |entity| q_tagged.contains(entity);
+
+        // Never early-exit. Note that you can change behavior per-entity.
+        let early_exit_test = |_entity| false;
+
+        // Ignore the visibility of entities. This allows ray casting hidden entities.
+        let visibility = RayCastVisibility::Any;
+
+        let settings = RayCastSettings::default()
+            .with_filter(&filter_gizmo_parts)
+            .with_early_exit_test(&early_exit_test)
+            .with_visibility(visibility)
+            .with_filter(&filter);
+
+        let Some((hit_entity, _hit)) = ray_cast.cast_ray(ray, &settings).first() else {
+            return;
+        };
+
+        // if mouse_input.just_released(gizmo_resource.selection_button) {
+        if mouse_input.just_released(MouseButton::Left) {
+            gizmo_settings.deselect();
+
+            let Ok(hit_entity_transform) = q_transform.get(*hit_entity) else {
+                warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", hit_entity);
+                return;
+            };
+
+            // Store the active Entity
+            gizmo_settings.active_entity = Some(*hit_entity);
+            gizmo_settings.origin = Some(*hit_entity_transform);
+
+            // Attach the TransformGizmo to it
+            // **q_gizmo = Transform::from_translation(hit_entity_transform.translation()).with_rotation(hit_entity_transform.rotation());
+            **q_gizmo = Transform::from_translation(hit_entity_transform.translation());
+        }
+    } else {
+        // Selection manually set via TransformGizmoSettings::select() method.
+        // Update the gizmo position to match the active entity's transform.
+        if let Some(active_entity) = gizmo_settings.active_entity {
+            if let Ok(active_transform) = q_transform.get(active_entity) {
+                **q_gizmo = Transform::from_translation(active_transform.translation());
+                    // .with_rotation(active_transform.rotation());
+            } else {
+                warn!("TransformGizmo: Active entity {:?} does not exist.", active_entity);
+                gizmo_settings.deselect();
+            }
+        }
+        gizmo_settings.manual_selection_triggered = false;  // Reset the manual selection flag
     }
 }
