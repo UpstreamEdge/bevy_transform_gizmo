@@ -24,7 +24,7 @@ pub fn build_gizmo(
         radius: 0.04,
         half_length: axis_length * 0.5f32,
     });
-    let arrow_tail_mesh_y = meshes.add(Capsule3d {
+    let arrow_tail_mesh_short = meshes.add(Capsule3d {
         radius: 0.04,
         half_length: axis_length * 0.333f32,
     });
@@ -82,11 +82,11 @@ pub fn build_gizmo(
     commands.entity(translation_x_axis).observe(transform_axis);
 
     let translation_y_axis = commands.spawn((
-        Mesh3d(arrow_tail_mesh_y.clone()),
+        Mesh3d(arrow_tail_mesh.clone()),
         MeshMaterial3d(gizmo_matl_y.clone()),
         Transform::from_matrix(Mat4::from_rotation_translation(
             Quat::from_rotation_y(std::f32::consts::PI / 2.0),
-            Vec3::new(0.0, axis_length / 3.0, 0.0),
+            Vec3::new(0.0, axis_length / 2.0, 0.0),
         )),
         NotShadowCaster,
         TransformGizmoPart,
@@ -97,11 +97,11 @@ pub fn build_gizmo(
     commands.entity(translation_y_axis).observe(transform_axis);
 
     let translation_z_axis = commands.spawn((
-        Mesh3d(arrow_tail_mesh.clone()),
+        Mesh3d(arrow_tail_mesh_short.clone()),
         MeshMaterial3d(gizmo_matl_z.clone()),
         Transform::from_matrix(Mat4::from_rotation_translation(
             Quat::from_rotation_x(std::f32::consts::PI / 2.0),
-            Vec3::new(0.0, 0.0, axis_length / 2.0),
+            Vec3::new(0.0, 0.0, axis_length / 3.0),
         )),
         NotShadowCaster,
         TransformGizmoPart,
@@ -129,7 +129,7 @@ pub fn build_gizmo(
 
     let translation_x_plane = commands.spawn((
         Mesh3d(plane_mesh.clone()),
-        MeshMaterial3d( gizmo_matl_x_sel.clone()),
+        MeshMaterial3d(gizmo_matl_x_sel.clone()),
         Transform::from_matrix(Mat4::from_rotation_translation(
             Quat::from_rotation_z(std::f32::consts::PI / -2.0),
             Vec3::new(0., plane_offset, plane_offset),
@@ -146,7 +146,7 @@ pub fn build_gizmo(
     let translation_y_handle = commands.spawn((
         Mesh3d(cone_mesh.clone()),
         MeshMaterial3d(gizmo_matl_y_sel.clone()),
-        Transform::from_translation(Vec3::new(0.0, axis_length * 0.667, 0.0)),
+        Transform::from_translation(Vec3::new(0.0, axis_length, 0.0)),
         NotShadowCaster,
         TransformGizmoPart,
         RenderLayers::layer(12),
@@ -158,8 +158,8 @@ pub fn build_gizmo(
 
 
     let translation_y_plane = commands.spawn((
-        Mesh3d( plane_mesh.clone()),
-        MeshMaterial3d( gizmo_matl_y_sel.clone()),
+        Mesh3d(plane_mesh.clone()),
+        MeshMaterial3d(gizmo_matl_y_sel.clone()),
          Transform::from_translation(Vec3::new(
             plane_offset,
             0.0,
@@ -174,11 +174,11 @@ pub fn build_gizmo(
     commands.entity(translation_y_plane).observe(transform_plane);
 
     let translation_z_handle = commands.spawn((
-        Mesh3d( cone_mesh.clone()),
-        MeshMaterial3d( gizmo_matl_z_sel.clone()),
+        Mesh3d(cone_mesh.clone()),
+        MeshMaterial3d(gizmo_matl_z_sel.clone()),
         Transform::from_matrix(Mat4::from_rotation_translation(
             Quat::from_rotation_x(std::f32::consts::PI / 2.0),
-            Vec3::new(0.0, 0.0, axis_length),
+            Vec3::new(0.0, 0.0, axis_length * 0.667),
         )),
         NotShadowCaster,
         TransformGizmoPart,
@@ -189,7 +189,7 @@ pub fn build_gizmo(
     commands.entity(translation_z_handle).observe(transform_axis);
 
     let translation_z_plane = commands.spawn((
-        Mesh3d( plane_mesh.clone()),
+        Mesh3d(plane_mesh.clone()),
         MeshMaterial3d( gizmo_matl_z_sel.clone()),
         Transform::from_matrix(Mat4::from_rotation_translation(
             Quat::from_rotation_x(std::f32::consts::PI / 2.0),
@@ -204,8 +204,8 @@ pub fn build_gizmo(
     commands.entity(translation_z_plane).observe(transform_plane);
 
     let handle = commands.spawn((
-        Mesh3d( sphere_mesh.clone()),
-        MeshMaterial3d( gizmo_matl_v_sel.clone()),
+        Mesh3d(sphere_mesh.clone()),
+        MeshMaterial3d(gizmo_matl_v_sel.clone()),
         NotShadowCaster,
         TransformGizmoPart,
         RenderLayers::layer(12),
@@ -232,31 +232,31 @@ pub fn build_gizmo(
     // commands.entity(rotation_x_arc).observe(transform_rotation);
 
 
-    let rotation_y_arc = commands.spawn((
-        Mesh3d(rotation_mesh.clone()),
-        MeshMaterial3d(gizmo_matl_y.clone()),
-        NotShadowCaster,
-        TransformGizmoPart,
-        RenderLayers::layer(12),
-    )).id();
-
-    commands.entity(parent).add_children(&[rotation_y_arc]);
-    commands.entity(rotation_y_arc).observe(transform_rotation);
-
-    // let rotation_z_arc = commands.spawn((
+    // let rotation_y_arc = commands.spawn((
     //     Mesh3d(rotation_mesh.clone()),
-    //     MeshMaterial3d(gizmo_matl_z.clone()),
-    //     Transform::from_rotation(
-    //         Quat::from_axis_angle(Vec3::Z, f32::to_radians(90.0))
-    //             * Quat::from_axis_angle(Vec3::X, f32::to_radians(90.0)),
-    //     ),
+    //     MeshMaterial3d(gizmo_matl_y.clone()),
     //     NotShadowCaster,
     //     TransformGizmoPart,
     //     RenderLayers::layer(12),
     // )).id();
 
-    // commands.entity(parent).add_children(&[rotation_z_arc]);
-    // commands.entity(rotation_z_arc).observe(transform_rotation);
+    // commands.entity(parent).add_children(&[rotation_y_arc]);
+    // commands.entity(rotation_y_arc).observe(transform_rotation);
+
+    let rotation_z_arc = commands.spawn((
+        Mesh3d(rotation_mesh.clone()),
+        MeshMaterial3d(gizmo_matl_z.clone()),
+        Transform::from_rotation(
+            Quat::from_axis_angle(Vec3::Z, f32::to_radians(90.0))
+                * Quat::from_axis_angle(Vec3::X, f32::to_radians(90.0)),
+        ),
+        NotShadowCaster,
+        TransformGizmoPart,
+        RenderLayers::layer(12),
+    )).id();
+
+    commands.entity(parent).add_children(&[rotation_z_arc]);
+    commands.entity(rotation_z_arc).observe(transform_rotation);
 
     commands.spawn((
         Camera3d {

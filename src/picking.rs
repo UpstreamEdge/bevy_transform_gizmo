@@ -1,11 +1,11 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, window::PrimaryWindow};
 
 use crate::*;
 
 
 pub fn transform_gizmo_picking(
     mut ray_cast: MeshRayCast,
-    windows: Single<&Window>,
+    primary_window: Query<&Window, With<PrimaryWindow>>,
     q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
     q_transform: Query<&GlobalTransform>,
     mouse_input: Res<ButtonInput<MouseButton>>,
@@ -14,13 +14,21 @@ pub fn transform_gizmo_picking(
     q_tagged: Query<(), With<GizmoTransformable>>,
     q_gizmo_parts: Query<(), Without<TransformGizmoPart>>,
 ) {
+    if !mouse_input.pressed(MouseButton::Left) {
+        gizmo_settings.is_dragging = false;
+    }
+
     let (camera_entity, camera) = *q_camera;
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
         warn!("TransformGizmo: Camera entity not found for picking. Ensure the camera is spawned before the picking system runs.");
         return;
     };
 
-    let Some(cursor_position) = windows.cursor_position() else {
+    let Ok(window) = primary_window.get_single() else {
+        debug!("primary_window.get_single() failed in transform_gizmo_picking!");
+        return;
+    };
+    let Some(cursor_position) = window.cursor_position() else {
         return;
     };
 
@@ -45,22 +53,12 @@ pub fn transform_gizmo_picking(
         .with_visibility(visibility)
         .with_filter(&filter);
 
-    // // Allow only tagged Components to be found;
-    // if gizmo_resource.use_tag_filter {
-    //     settings = settings.with_filter(&filter);
-    // }
-
     let Some((hit_entity, _hit)) = ray_cast.cast_ray(ray, &settings).first() else {
         return;
     };
 
     // if mouse_input.just_released(gizmo_resource.selection_button) {
     if mouse_input.just_released(MouseButton::Left) {
-        // if gizmo_resource.entity.is_some() {
-        //     // Reset Last Selection
-        //     gizmo_resource.origin = None;
-        //     gizmo_resource.entity = None;
-        // }
         gizmo_settings.deselect();
 
         let Ok(hit_entity_transform) = q_transform.get(*hit_entity) else {

@@ -1,6 +1,9 @@
 
 # Changelog
 
+## Version 1.0.2 (May 1, 2025)
+* Store dragging status properly
+
 ## Version 1.0.1 (April 30, 2025)
 * Misc cleanup
 
