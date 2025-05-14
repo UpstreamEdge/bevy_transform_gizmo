@@ -1,6 +1,6 @@
 [package]
 name = "bevy_transform_gizmo"
-version = "1.0.2"
+version = "1.0.4"
 edition = "2024"
 description = "A 3D transform gizmo for Bevy"
 

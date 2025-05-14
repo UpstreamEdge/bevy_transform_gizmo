@@ -81,7 +81,7 @@ pub fn transform_gizmo_picking(
         if let Some(active_entity) = gizmo_settings.active_entity {
             if let Ok(active_transform) = q_transform.get(active_entity) {
                 **q_gizmo = Transform::from_translation(active_transform.translation());
-                    // .with_rotation(active_transform.rotation());
+                debug!("Updated gizmo position to match active entity. Translation: {:?}", active_transform.translation());
             } else {
                 warn!("TransformGizmo: Active entity {:?} does not exist.", active_entity);
                 gizmo_settings.deselect();

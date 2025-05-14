@@ -6,7 +6,6 @@ use bevy::{
 };
 
 use crate::*;
-// use crate::normalization::*;
 
 const TRANSFORM_GIZMO_RENDER_LAYER: usize = 12;
 
@@ -59,10 +58,6 @@ pub fn build_gizmo(
         Visibility::Hidden,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
         TransformGizmo,
-        // Normalize3d{
-        //     size_in_world: 1.5,
-        //     desired_pixel_size : 150.0
-        // },
         )).id();
 
 
@@ -78,8 +73,6 @@ pub fn build_gizmo(
         NotShadowCaster,
         TransformGizmoPart,
     )).id();
-
-
     commands.entity(parent).add_children(&[translation_x_axis]);
     commands.entity(translation_x_axis).observe(transform_axis);
 
@@ -94,7 +87,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[translation_y_axis]);
     commands.entity(translation_y_axis).observe(transform_axis);
 
@@ -109,7 +101,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[translation_z_axis]);
     commands.entity(translation_z_axis).observe(transform_axis);
 
@@ -125,7 +116,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[translation_x_handle]);
     commands.entity(translation_x_handle).observe(transform_axis);
 
@@ -140,7 +130,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[translation_x_plane]);
     commands.entity(translation_x_plane).observe(transform_plane);
 
@@ -153,7 +142,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[translation_y_handle]);
     commands.entity(translation_y_handle).observe(transform_axis);
 
@@ -170,7 +158,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[translation_y_plane]);
     commands.entity(translation_y_plane).observe(transform_plane);
 
@@ -185,7 +172,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[translation_z_handle]);
     commands.entity(translation_z_handle).observe(transform_axis);
 
@@ -200,7 +186,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[translation_z_plane]);
     commands.entity(translation_z_plane).observe(transform_plane);
 
@@ -211,7 +196,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[handle]);
     commands.entity(handle).observe(transform_camera_plane);
 
@@ -228,10 +212,8 @@ pub fn build_gizmo(
     //     TransformGizmoPart,
     //     RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     // )).id();
-
     // commands.entity(parent).add_children(&[rotation_x_arc]);
     // commands.entity(rotation_x_arc).observe(transform_rotation);
-
 
     let rotation_y_arc = commands.spawn((
         Mesh3d(rotation_mesh.clone()),
@@ -240,7 +222,6 @@ pub fn build_gizmo(
         TransformGizmoPart,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
-
     commands.entity(parent).add_children(&[rotation_y_arc]);
     commands.entity(rotation_y_arc).observe(transform_rotation);
 
@@ -255,7 +236,6 @@ pub fn build_gizmo(
     //     TransformGizmoPart,
     //     RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     // )).id();
-
     // commands.entity(parent).add_children(&[rotation_z_arc]);
     // commands.entity(rotation_z_arc).observe(transform_rotation);
 

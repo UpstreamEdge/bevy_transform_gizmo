@@ -28,8 +28,6 @@ use gizmo_component::*;
 mod gizmo_material;
 use gizmo_material::GizmoMaterial;
 
-// pub mod normalization;
-// use crate::normalization::*;
 
 #[derive(Component, Default, Clone, Debug)]
 pub struct InternalGizmoCamera;
@@ -95,7 +93,6 @@ impl Plugin for TransformGizmoPlugin {
         app.add_systems(Update,update_gizmo_visibility);
         app.add_systems(Update,deactivate_gizmo_if_entity_does_not_exist);
 
-        // app.add_systems(PostUpdate,normalize);
         app.add_systems(PostUpdate,gizmo_cam_copy_settings);
 
     }

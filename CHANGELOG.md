@@ -1,6 +1,12 @@
 
 # Changelog
 
+## Version 1.0.4 (May 14, 2025)
+* Misc cleanup
+
+## Version 1.0.3 (May 1, 2025)
+* Add `select` method to TransformGizmoSettings and fix rotational issues
+
 ## Version 1.0.2 (May 1, 2025)
 * Store dragging status properly
 
