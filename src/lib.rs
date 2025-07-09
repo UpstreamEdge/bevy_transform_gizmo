@@ -93,7 +93,7 @@ impl Plugin for TransformGizmoPlugin {
         app.add_systems(Update,update_gizmo_visibility);
         app.add_systems(Update,deactivate_gizmo_if_entity_does_not_exist);
 
-        app.add_systems(PostUpdate,gizmo_cam_copy_settings);
+        app.add_systems(PostUpdate, gizmo_cam_copy_settings);
 
     }
 }
@@ -103,7 +103,7 @@ fn update_gizmo_visibility(
     gizmo_settings: Res<TransformGizmoSettings>,
     mut gizmo_query: Query<&mut Visibility, With<TransformGizmo>>,
 ) {
-    if let Ok(mut visibility) = gizmo_query.get_single_mut() {
+    if let Ok(mut visibility) = gizmo_query.single_mut() {
         if gizmo_settings.is_active() {
             *visibility = Visibility::Visible;
         } else {
@@ -117,7 +117,7 @@ fn deactivate_gizmo_if_entity_does_not_exist(
     mut gizmo_settings: ResMut<TransformGizmoSettings>,
 ) {
     if let Some(active_entity) = gizmo_settings.active_entity {
-        if commands.get_entity(active_entity).is_none() {
+        if let Err(_) = commands.get_entity(active_entity) {
             // If the active entity does not exist, deactivate the gizmo
             gizmo_settings.deselect();
         }
@@ -132,13 +132,16 @@ fn gizmo_cam_copy_settings(
         (With<InternalGizmoCamera>, Without<GizmoPickSource>),
     >,
 ) {
-    let (main_cam, main_cam_pos, main_proj) = if let Ok(x) = main_cam.get_single() {
+    let (main_cam, main_cam_pos, main_proj) = if let Ok(x) = main_cam.single() {
         x
     } else {
-        error!("No `GizmoPickSource` found! Insert the `GizmoPickSource` component onto your primary 3d camera");
+        log::error!("No `GizmoPickSource` found! Insert the `GizmoPickSource` component onto your primary 3d camera");
         return;
     };
-    let (mut gizmo_cam, mut gizmo_cam_pos, mut proj) = gizmo_cam.single_mut();
+    let Ok((mut gizmo_cam, mut gizmo_cam_pos, mut proj)) = gizmo_cam.single_mut() else {
+        log::error!("No `InternalGizmoCamera` found! Insert the `InternalGizmoCamera` component onto your gizmo camera entity");
+        return;
+    };
     if main_cam_pos.is_changed() {
         *gizmo_cam_pos = *main_cam_pos;
     }

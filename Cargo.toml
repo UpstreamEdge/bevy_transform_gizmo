@@ -1,6 +1,6 @@
 [package]
 name = "bevy_transform_gizmo"
-version = "1.0.4"
+version = "1.1.0"
 edition = "2024"
 description = "A 3D transform gizmo for Bevy"
 
@@ -17,7 +17,8 @@ description = "A 3D transform gizmo for Bevy"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = { version = "0.15.3", default-features = false, features = [
+# bevy = { version = "0.15.3", default-features = false, features = [
+bevy = { path = "../bevy", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_pbr",
@@ -25,9 +26,11 @@ bevy = { version = "0.15.3", default-features = false, features = [
     "bevy_mesh_picking_backend",
     "bevy_window"
 ] }
+log = "0.4.27"
 
 [dev-dependencies]
-bevy = { version = "0.15.3", default-features = false, features = [
+# bevy = { version = "0.15.3", default-features = false, features = [
+bevy = { path = "../bevy", default-features = false, features = [
     "bevy_pbr",
     "bevy_winit",
     "x11",

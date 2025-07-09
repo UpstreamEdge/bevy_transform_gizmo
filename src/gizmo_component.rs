@@ -250,5 +250,6 @@ pub fn build_gizmo(
         },
         InternalGizmoCamera,
         RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
+        Name::new("3D Transform Gizmo Camera"),
     ));
 }

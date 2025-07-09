@@ -1,6 +1,9 @@
 
 # Changelog
 
+## Version 1.1.0 (July 9, 2025)
+* Update to Bevy 0.16 (patched)
+
 ## Version 1.0.4 (May 14, 2025)
 * Misc cleanup
 

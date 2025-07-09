@@ -20,12 +20,12 @@ pub fn transform_gizmo_picking(
 
     let (camera_entity, camera) = *q_camera;
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
-        warn!("TransformGizmo: Camera entity not found for picking. Ensure the camera is spawned before the picking system runs.");
+        log::warn!("TransformGizmo: Camera entity not found for picking. Ensure the camera is spawned before the picking system runs.");
         return;
     };
 
-    let Ok(window) = primary_window.get_single() else {
-        debug!("primary_window.get_single() failed in transform_gizmo_picking!");
+    let Ok(window) = primary_window.single() else {
+        log::debug!("primary_window.single() failed in transform_gizmo_picking!");
         return;
     };
     let Some(cursor_position) = window.cursor_position() else {
@@ -48,7 +48,7 @@ pub fn transform_gizmo_picking(
         // Ignore the visibility of entities. This allows ray casting hidden entities.
         let visibility = RayCastVisibility::Any;
 
-        let settings = RayCastSettings::default()
+        let settings = MeshRayCastSettings::default()
             .with_filter(&filter_gizmo_parts)
             .with_early_exit_test(&early_exit_test)
             .with_visibility(visibility)
@@ -63,7 +63,7 @@ pub fn transform_gizmo_picking(
             gizmo_settings.deselect();
 
             let Ok(hit_entity_transform) = q_transform.get(*hit_entity) else {
-                warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", hit_entity);
+                log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", hit_entity);
                 return;
             };
 
@@ -81,9 +81,9 @@ pub fn transform_gizmo_picking(
         if let Some(active_entity) = gizmo_settings.active_entity {
             if let Ok(active_transform) = q_transform.get(active_entity) {
                 **q_gizmo = Transform::from_translation(active_transform.translation());
-                debug!("Updated gizmo position to match active entity. Translation: {:?}", active_transform.translation());
+                log::debug!("Updated gizmo position to match active entity. Translation: {:?}", active_transform.translation());
             } else {
-                warn!("TransformGizmo: Active entity {:?} does not exist.", active_entity);
+                log::warn!("TransformGizmo: Active entity {:?} does not exist.", active_entity);
                 gizmo_settings.deselect();
             }
         }

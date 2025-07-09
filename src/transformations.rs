@@ -7,7 +7,7 @@ use crate::*;
 /// This Observer Function allows to move in the Forward/Back direction of the dragged Entity
 pub fn transform_axis(
     drag: Trigger<Pointer<Drag>>,
-    q_parents: Query<&Parent>,
+    q_parents: Query<&ChildOf>,
     q_transform: Query<&mut GlobalTransform>,
     mut q_local_transform: Query<&mut Transform>,
     primary_window: Query<&Window, With<PrimaryWindow>>,
@@ -21,29 +21,29 @@ pub fn transform_axis(
 
     let (camera_entity, camera) = *q_camera;
 
-    let handle_entity = drag.entity();
+    let handle_entity = drag.target();
 
     let Ok(parent_entity) = q_parents.get(handle_entity) else {
-        warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
         return;
     };
-    let parent_entity = parent_entity.get();
+    let parent_entity = parent_entity.parent();
 
     let Ok(gismo_transform) = q_transform.get(handle_entity) else {
-        warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
         return;
     };
 
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
-        warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
         return;
     };
 
     let direction = gismo_transform.up();
     let direction_plane = gismo_transform.forward();
 
-    let Ok(window) = primary_window.get_single() else {
-        debug!("primary_window.get_single() failed in transform_axis!");
+    let Ok(window) = primary_window.single() else {
+        log::debug!("primary_window.single() failed in transform_axis!");
         return;
     };
     let Some(cursor_position) = window.cursor_position() else {
@@ -86,7 +86,7 @@ pub fn transform_axis(
     if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
         parent_transform_local.translation += result;
     } else {
-        warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
     }
 
     // Set the Transformation to the connected Object
@@ -95,7 +95,7 @@ pub fn transform_axis(
             selection_transform_local.translation += result;
             settings.is_dragging = true;
         } else {
-            warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
         }
     }
 }
@@ -103,7 +103,7 @@ pub fn transform_axis(
 /// This Observer Function allows to move in the two directions on the Plane created from Forward and Right of the dragged Entity
 pub fn transform_plane(
     drag: Trigger<Pointer<Drag>>,
-    q_parents: Query<&Parent>,
+    q_parents: Query<&ChildOf>,
     q_transform: Query<&mut GlobalTransform>,
     mut q_local_transform: Query<&mut Transform>,
     primary_window: Query<&Window, With<PrimaryWindow>>,
@@ -117,21 +117,21 @@ pub fn transform_plane(
 
     let (camera_entity, camera) = *q_camera;
 
-    let handle_entity = drag.entity();
+    let handle_entity = drag.target();
 
     let Ok(parent_entity) = q_parents.get(handle_entity) else {
-        warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
         return;
     };
-    let parent_entity = parent_entity.get();
+    let parent_entity = parent_entity.parent();
 
     let Ok(gismo_transform) = q_transform.get(handle_entity) else {
-        warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
         return;
     };
 
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
-        warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
         return;
     };
 
@@ -140,8 +140,8 @@ pub fn transform_plane(
 
     let direction_plane = gismo_transform.up();
 
-    let Ok(window) = primary_window.get_single() else {
-        debug!("primary_window.get_single() failed in transform_plane!");
+    let Ok(window) = primary_window.single() else {
+        log::debug!("primary_window.single() failed in transform_plane!");
         return;
     };
     let Some(cursor_position) = window.cursor_position() else {
@@ -184,7 +184,7 @@ pub fn transform_plane(
     if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
         parent_transform_local.translation += result;
     } else {
-        warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
     }
 
     // Set the Transformation to the connected Object
@@ -193,7 +193,7 @@ pub fn transform_plane(
             selection_transform_local.translation += result;
             settings.is_dragging = true;
         } else {
-            warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
         }
     }
 }
@@ -201,7 +201,7 @@ pub fn transform_plane(
 /// This Observer Function allows to move in the two directions on the Plane created from the Camera View of the dragged Entity
 pub fn transform_camera_plane(
     drag: Trigger<Pointer<Drag>>,
-    q_parents: Query<&Parent>,
+    q_parents: Query<&ChildOf>,
     q_transform: Query<&mut GlobalTransform>,
     mut q_local_transform: Query<&mut Transform>,
     primary_window: Query<&Window, With<PrimaryWindow>>,
@@ -215,26 +215,26 @@ pub fn transform_camera_plane(
 
     let (camera_entity, camera) = *q_camera;
 
-    let handle_entity = drag.entity();
+    let handle_entity = drag.target();
 
     let Ok(parent_entity) = q_parents.get(handle_entity) else {
-        warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
         return;
     };
-    let parent_entity = parent_entity.get();
+    let parent_entity = parent_entity.parent();
 
-    let Ok(gismo_transform) = q_transform.get(handle_entity) else {
-        warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+    let Ok(gizmo_transform) = q_transform.get(handle_entity) else {
+        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
         return;
     };
 
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
-        warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
         return;
     };
 
-    let Ok(window) = primary_window.get_single() else {
-        debug!("primary_window.get_single() failed in transform_camera_plane!");
+    let Ok(window) = primary_window.single() else {
+        log::debug!("primary_window.single() failed in transform_camera_plane!");
         return;
     };
     let Some(cursor_position) = window.cursor_position() else {
@@ -249,7 +249,7 @@ pub fn transform_camera_plane(
     let direction_plane = camera_transform.back();
     // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance) =
-        ray.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
+        ray.intersect_plane(gizmo_transform.translation(), InfinitePlane3d::new(direction_plane))
     else {
         return;
     };
@@ -263,7 +263,7 @@ pub fn transform_camera_plane(
 
     // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance_delta) =
-        ray_delta.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
+        ray_delta.intersect_plane(gizmo_transform.translation(), InfinitePlane3d::new(direction_plane))
     else {
         return;
     };
@@ -283,7 +283,7 @@ pub fn transform_camera_plane(
     if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
         parent_transform_local.translation += result;
     } else {
-        warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
     }
 
     // Set the Transformation to the connected Object
@@ -292,7 +292,7 @@ pub fn transform_camera_plane(
             selection_transform_local.translation += result;
             settings.is_dragging = true;
         } else {
-            warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
         }
     }
 }
@@ -301,7 +301,7 @@ pub fn transform_camera_plane(
 /// This Observer Function allows to rotate the dragged Entity
 pub fn transform_rotation(
     drag: Trigger<Pointer<Drag>>,
-    q_parents: Query<&Parent>,
+    q_parents: Query<&ChildOf>,
     q_transform: Query<&mut GlobalTransform>,
     mut q_local_transform: Query<&mut Transform>,
     primary_window: Query<&Window, With<PrimaryWindow>>,
@@ -315,31 +315,31 @@ pub fn transform_rotation(
 
     let (camera_entity, camera) = *q_camera;
 
-    let handle_entity = drag.entity();
+    let handle_entity = drag.target();
 
     let Ok(parent_entity) = q_parents.get(handle_entity) else {
-        warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
         return;
     };
-    let parent_entity = parent_entity.get();
+    let parent_entity = parent_entity.parent();
 
-    let Ok(gismo_transform) = q_transform.get(handle_entity) else {
-        warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+    let Ok(gizmo_transform) = q_transform.get(handle_entity) else {
+        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
         return;
     };
 
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
-        warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
         return;
     };
 
 
-    let axis_1 = Vec3::from(gismo_transform.up());
+    let axis_1 = Vec3::from(gizmo_transform.up());
 
-    let direction_plane = gismo_transform.up();
+    let direction_plane = gizmo_transform.up();
 
-    let Ok(window) = primary_window.get_single() else {
-        debug!("primary_window.get_single() failed in transform_rotation!");
+    let Ok(window) = primary_window.single() else {
+        log::debug!("primary_window.get_single() failed in transform_rotation!");
         return;
     };
     let Some(cursor_position) = window.cursor_position() else {
@@ -353,7 +353,7 @@ pub fn transform_rotation(
 
     // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance) =
-        ray.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
+        ray.intersect_plane(gizmo_transform.translation(), InfinitePlane3d::new(direction_plane))
     else {
         return;
     };
@@ -367,15 +367,15 @@ pub fn transform_rotation(
 
     // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance_delta) =
-        ray_delta.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
+        ray_delta.intersect_plane(gizmo_transform.translation(), InfinitePlane3d::new(direction_plane))
     else {
         return;
     };
     let point_delta = ray_delta.get_point(distance_delta);
 
     // Calculate the Effect of the mouse movement in the direction of the Handle
-    let origin = gismo_transform.translation();
-    let origin_dir = gismo_transform.back();
+    let origin = gizmo_transform.translation();
+    let origin_dir = gizmo_transform.back();
 
     let dir1 = (point-origin).normalize();
     let dir2 = (point_delta-origin).normalize();
@@ -389,7 +389,7 @@ pub fn transform_rotation(
     if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
         parent_transform_local.rotate(Quat::from_axis_angle(axis_1, angle_diff));
     } else {
-        warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
     }
 
     // Set the Transformation to the connected Object
@@ -398,7 +398,7 @@ pub fn transform_rotation(
             selection_transform_local.rotate(Quat::from_axis_angle(axis_1, angle_diff));
             settings.is_dragging = true;
         } else {
-            warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
         }
     }
 }
