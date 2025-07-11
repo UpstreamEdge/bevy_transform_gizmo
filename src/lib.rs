@@ -17,9 +17,6 @@ use bevy::asset::load_internal_asset;
 pub mod mesh;
 use mesh::*;
 
-pub mod  picking;
-use picking::*;
-
 pub mod transformations;
 use transformations::*;
 
@@ -27,10 +24,6 @@ pub mod gizmo_component;
 use gizmo_component::*;
 mod gizmo_material;
 use gizmo_material::GizmoMaterial;
-
-
-#[derive(Component, Default, Clone, Debug)]
-pub struct InternalGizmoCamera;
 
 
 #[derive(Component)]
@@ -50,7 +43,6 @@ pub struct TransformGizmoSettings {
     pub(crate) active_entity: Option<Entity>,
     pub(crate) is_dragging: bool,
     pub(crate) origin: Option<GlobalTransform>,
-    pub(crate) manual_selection_triggered: bool,
 }
 
 impl TransformGizmoSettings {
@@ -63,7 +55,6 @@ impl TransformGizmoSettings {
     pub fn select(&mut self, entity: Entity, origin: GlobalTransform) {
         self.active_entity = Some(entity);
         self.origin = Some(origin);
-        self.manual_selection_triggered = true;
     }
     pub fn deselect(&mut self) {
         self.active_entity = None;
@@ -89,12 +80,30 @@ impl Plugin for TransformGizmoPlugin {
 
         app.add_systems(PostStartup, build_gizmo);
 
-        app.add_systems(Update, transform_gizmo_picking);
-        app.add_systems(Update,update_gizmo_visibility);
-        app.add_systems(Update,deactivate_gizmo_if_entity_does_not_exist);
+        app.add_systems(Update, debug_print_settings);
 
-        app.add_systems(PostUpdate, gizmo_cam_copy_settings);
+        app.add_systems(Update, (
+            update_gizmo_position,
+            update_gizmo_visibility,
+            deactivate_gizmo_if_entity_does_not_exist
+        ).chain());
+    }
+}
 
+fn debug_print_settings(
+    gizmo_settings: Res<TransformGizmoSettings>,
+) {
+    if gizmo_settings.is_active() {
+        log::warn!("Active Entity: {:?}", gizmo_settings.active_entity);
+        log::info!("Is Dragging: {}", gizmo_settings.is_dragging);
+        if let Some(origin) = &gizmo_settings.origin {
+            log::info!("Origin: {:?}", origin.translation());
+        } else {
+            log::info!("No Origin Set");
+        }
+        println!();
+    } else {
+        log::info!("Gizmo is not active.");
     }
 }
 
@@ -103,53 +112,48 @@ fn update_gizmo_visibility(
     gizmo_settings: Res<TransformGizmoSettings>,
     mut gizmo_query: Query<&mut Visibility, With<TransformGizmo>>,
 ) {
-    if let Ok(mut visibility) = gizmo_query.single_mut() {
-        if gizmo_settings.is_active() {
-            *visibility = Visibility::Visible;
-        } else {
-            *visibility = Visibility::Hidden;
+    match gizmo_query.single_mut() {
+        Ok(mut visibility) => {
+            *visibility = if gizmo_settings.is_active() {
+                log::info!("Gizmo is active and should be visible.");
+                Visibility::Visible
+            } else {
+                Visibility::Hidden
+            };
+        }
+        Err(err) => {
+            log::error!("Failed to update transform gizmo visibility: {err}");
         }
     }
 }
 
+/// Deactivates the gizmo if the active entity does not exist in the world.
 fn deactivate_gizmo_if_entity_does_not_exist(
-    mut commands: Commands,
+    entity_query: Query<Entity>,
     mut gizmo_settings: ResMut<TransformGizmoSettings>,
 ) {
     if let Some(active_entity) = gizmo_settings.active_entity {
-        if let Err(_) = commands.get_entity(active_entity) {
+        if entity_query.get(active_entity).is_err() {
             // If the active entity does not exist, deactivate the gizmo
             gizmo_settings.deselect();
         }
+    } else {
+        // If no active entity, ensure the gizmo is deselected
+        gizmo_settings.deselect();
     }
 }
 
-
-fn gizmo_cam_copy_settings(
-    main_cam: Query<(Ref<Camera>, Ref<GlobalTransform>, Ref<Projection>), With<GizmoPickSource>>,
-    mut gizmo_cam: Query<
-        (&mut Camera, &mut GlobalTransform, &mut Projection),
-        (With<InternalGizmoCamera>, Without<GizmoPickSource>),
-    >,
+/// Updates the position of the gizmo to match the associated/active entity's position.
+fn update_gizmo_position(
+    gizmo_settings: Res<TransformGizmoSettings>,
+    mut q_gizmo: Query<&mut Transform, With<TransformGizmo>>,
+    q_transform: Query<&GlobalTransform>,
 ) {
-    let (main_cam, main_cam_pos, main_proj) = if let Ok(x) = main_cam.single() {
-        x
-    } else {
-        log::error!("No `GizmoPickSource` found! Insert the `GizmoPickSource` component onto your primary 3d camera");
-        return;
-    };
-    let Ok((mut gizmo_cam, mut gizmo_cam_pos, mut proj)) = gizmo_cam.single_mut() else {
-        log::error!("No `InternalGizmoCamera` found! Insert the `InternalGizmoCamera` component onto your gizmo camera entity");
-        return;
-    };
-    if main_cam_pos.is_changed() {
-        *gizmo_cam_pos = *main_cam_pos;
-    }
-    if main_cam.is_changed() {
-        *gizmo_cam = main_cam.clone();
-        gizmo_cam.order += 10;
-    }
-    if main_proj.is_changed() {
-        *proj = main_proj.clone();
+    if let Some(active_entity) = gizmo_settings.active_entity {
+        if let Ok(active_transform) = q_transform.get(active_entity) {
+            if let Ok(mut gizmo_transform) = q_gizmo.single_mut() {
+                *gizmo_transform = Transform::from_translation(active_transform.translation());
+            }
+        }
     }
 }

@@ -1,13 +1,10 @@
 use bevy::{
-    core_pipeline::core_3d::Camera3dDepthLoadOp,
     pbr::NotShadowCaster,
     prelude::*,
-    render::view::RenderLayers,
 };
 
 use crate::*;
 
-const TRANSFORM_GIZMO_RENDER_LAYER: usize = 12;
 
 
 /// Startup system that builds the procedural mesh and materials of the gizmo.
@@ -56,9 +53,9 @@ pub fn build_gizmo(
     let parent = commands.spawn((
         Transform::from_xyz(0.0, 0.0, 0.0),
         Visibility::Hidden,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
         TransformGizmo,
         )).id();
+    commands.entity(parent).observe(transform_drag_end);
 
 
     // Translation Axes
@@ -69,12 +66,11 @@ pub fn build_gizmo(
             Quat::from_rotation_z(std::f32::consts::PI / 2.0),
             Vec3::new(axis_length / 2.0, 0.0, 0.0),
         )),
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
         NotShadowCaster,
         TransformGizmoPart,
     )).id();
     commands.entity(parent).add_children(&[translation_x_axis]);
-    commands.entity(translation_x_axis).observe(transform_axis);
+    commands.entity(translation_x_axis).observe(transform_axis).observe(transform_drag_end);
 
     let translation_y_axis = commands.spawn((
         Mesh3d(arrow_tail_mesh_short.clone()),
@@ -85,10 +81,9 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[translation_y_axis]);
-    commands.entity(translation_y_axis).observe(transform_axis);
+    commands.entity(translation_y_axis).observe(transform_axis).observe(transform_drag_end);
 
     let translation_z_axis = commands.spawn((
         Mesh3d(arrow_tail_mesh.clone()),
@@ -99,10 +94,9 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[translation_z_axis]);
-    commands.entity(translation_z_axis).observe(transform_axis);
+    commands.entity(translation_z_axis).observe(transform_axis).observe(transform_drag_end);
 
     // Translation Handles
     let translation_x_handle = commands.spawn((
@@ -114,10 +108,9 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[translation_x_handle]);
-    commands.entity(translation_x_handle).observe(transform_axis);
+    commands.entity(translation_x_handle).observe(transform_axis).observe(transform_drag_end);
 
     let translation_x_plane = commands.spawn((
         Mesh3d(plane_mesh.clone()),
@@ -128,10 +121,9 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[translation_x_plane]);
-    commands.entity(translation_x_plane).observe(transform_plane);
+    commands.entity(translation_x_plane).observe(transform_plane).observe(transform_drag_end);
 
 
     let translation_y_handle = commands.spawn((
@@ -140,10 +132,9 @@ pub fn build_gizmo(
         Transform::from_translation(Vec3::new(0.0, axis_length * 0.667, 0.0)),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[translation_y_handle]);
-    commands.entity(translation_y_handle).observe(transform_axis);
+    commands.entity(translation_y_handle).observe(transform_axis).observe(transform_drag_end);
 
 
     let translation_y_plane = commands.spawn((
@@ -156,10 +147,9 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[translation_y_plane]);
-    commands.entity(translation_y_plane).observe(transform_plane);
+    commands.entity(translation_y_plane).observe(transform_plane).observe(transform_drag_end);
 
     let translation_z_handle = commands.spawn((
         Mesh3d(cone_mesh.clone()),
@@ -170,10 +160,9 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[translation_z_handle]);
-    commands.entity(translation_z_handle).observe(transform_axis);
+    commands.entity(translation_z_handle).observe(transform_axis).observe(transform_drag_end);
 
     let translation_z_plane = commands.spawn((
         Mesh3d(plane_mesh.clone()),
@@ -184,20 +173,18 @@ pub fn build_gizmo(
         )),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[translation_z_plane]);
-    commands.entity(translation_z_plane).observe(transform_plane);
+    commands.entity(translation_z_plane).observe(transform_plane).observe(transform_drag_end);
 
     let handle = commands.spawn((
         Mesh3d(sphere_mesh.clone()),
         MeshMaterial3d(gizmo_matl_v_sel.clone()),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[handle]);
-    commands.entity(handle).observe(transform_camera_plane);
+    commands.entity(handle).observe(transform_camera_plane).observe(transform_drag_end);
 
 
     // Rotation Arcs
@@ -210,7 +197,6 @@ pub fn build_gizmo(
     //     )),
     //     NotShadowCaster,
     //     TransformGizmoPart,
-    //     RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     // )).id();
     // commands.entity(parent).add_children(&[rotation_x_arc]);
     // commands.entity(rotation_x_arc).observe(transform_rotation);
@@ -220,10 +206,9 @@ pub fn build_gizmo(
         MeshMaterial3d(gizmo_matl_y.clone()),
         NotShadowCaster,
         TransformGizmoPart,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     )).id();
     commands.entity(parent).add_children(&[rotation_y_arc]);
-    commands.entity(rotation_y_arc).observe(transform_rotation);
+    commands.entity(rotation_y_arc).observe(transform_rotation).observe(transform_drag_end);
 
     // let rotation_z_arc = commands.spawn((
     //     Mesh3d(rotation_mesh.clone()),
@@ -234,22 +219,20 @@ pub fn build_gizmo(
     //     ),
     //     NotShadowCaster,
     //     TransformGizmoPart,
-    //     RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
     // )).id();
     // commands.entity(parent).add_children(&[rotation_z_arc]);
     // commands.entity(rotation_z_arc).observe(transform_rotation);
 
-    commands.spawn((
-        Camera3d {
-            depth_load_op: Camera3dDepthLoadOp::Clear(0.),
-            ..default()
-        },
-        Camera {
-            clear_color: ClearColorConfig::None,
-            ..default()
-        },
-        InternalGizmoCamera,
-        RenderLayers::layer(TRANSFORM_GIZMO_RENDER_LAYER),
-        Name::new("3D Transform Gizmo Camera"),
-    ));
+    // commands.spawn((
+    //     Camera3d {
+    //         depth_load_op: Camera3dDepthLoadOp::Clear(0.),
+    //         ..default()
+    //     },
+    //     Camera {
+    //         clear_color: ClearColorConfig::None,
+    //         ..default()
+    //     },
+    //     // InternalGizmoCamera,
+    //     Name::new("3D Transform Gizmo Camera"),
+    // ));
 }

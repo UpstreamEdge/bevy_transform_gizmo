@@ -1,4 +1,3 @@
-
 use bevy::{prelude::*, window::PrimaryWindow};
 
 use crate::*;
@@ -100,6 +99,7 @@ pub fn transform_axis(
     }
 }
 
+
 /// This Observer Function allows to move in the two directions on the Plane created from Forward and Right of the dragged Entity
 pub fn transform_plane(
     drag: Trigger<Pointer<Drag>>,
@@ -197,6 +197,7 @@ pub fn transform_plane(
         }
     }
 }
+
 
 /// This Observer Function allows to move in the two directions on the Plane created from the Camera View of the dragged Entity
 pub fn transform_camera_plane(
@@ -401,4 +402,12 @@ pub fn transform_rotation(
             log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
         }
     }
+}
+
+/// This Observer Function resets the dragging state when pointer is released
+pub fn transform_drag_end(
+    _release: Trigger<Pointer<DragEnd>>,
+    mut settings: ResMut<TransformGizmoSettings>,
+) {
+    settings.is_dragging = false;
 }
