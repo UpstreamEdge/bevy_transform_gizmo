@@ -1,6 +1,9 @@
 
 # Changelog
 
+## Version 1.1.1 (July 11, 2025)
+* Fix Clippy lints
+
 ## Version 1.1.0 (July 9, 2025)
 * Update to Bevy 0.16 (patched)
 

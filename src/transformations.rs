@@ -23,18 +23,18 @@ pub fn transform_axis(
     let handle_entity = drag.target();
 
     let Ok(parent_entity) = q_parents.get(handle_entity) else {
-        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {handle_entity:?}");
         return;
     };
     let parent_entity = parent_entity.parent();
 
     let Ok(gismo_transform) = q_transform.get(handle_entity) else {
-        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {handle_entity:?}");
         return;
     };
 
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
-        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {camera_entity:?}");
         return;
     };
 
@@ -85,7 +85,7 @@ pub fn transform_axis(
     if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
         parent_transform_local.translation += result;
     } else {
-        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {parent_entity:?}");
     }
 
     // Set the Transformation to the connected Object
@@ -94,7 +94,7 @@ pub fn transform_axis(
             selection_transform_local.translation += result;
             settings.is_dragging = true;
         } else {
-            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {sel_entity:?}");
         }
     }
 }
@@ -120,18 +120,18 @@ pub fn transform_plane(
     let handle_entity = drag.target();
 
     let Ok(parent_entity) = q_parents.get(handle_entity) else {
-        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {handle_entity:?}");
         return;
     };
     let parent_entity = parent_entity.parent();
 
     let Ok(gismo_transform) = q_transform.get(handle_entity) else {
-        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {handle_entity:?}");
         return;
     };
 
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
-        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {camera_entity:?}");
         return;
     };
 
@@ -184,7 +184,7 @@ pub fn transform_plane(
     if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
         parent_transform_local.translation += result;
     } else {
-        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {parent_entity:?}");
     }
 
     // Set the Transformation to the connected Object
@@ -193,7 +193,7 @@ pub fn transform_plane(
             selection_transform_local.translation += result;
             settings.is_dragging = true;
         } else {
-            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {sel_entity:?}");
         }
     }
 }
@@ -219,18 +219,18 @@ pub fn transform_camera_plane(
     let handle_entity = drag.target();
 
     let Ok(parent_entity) = q_parents.get(handle_entity) else {
-        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {handle_entity:?}");
         return;
     };
     let parent_entity = parent_entity.parent();
 
     let Ok(gizmo_transform) = q_transform.get(handle_entity) else {
-        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {handle_entity:?}");
         return;
     };
 
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
-        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {camera_entity:?}");
         return;
     };
 
@@ -284,7 +284,7 @@ pub fn transform_camera_plane(
     if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
         parent_transform_local.translation += result;
     } else {
-        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {parent_entity:?}");
     }
 
     // Set the Transformation to the connected Object
@@ -293,7 +293,7 @@ pub fn transform_camera_plane(
             selection_transform_local.translation += result;
             settings.is_dragging = true;
         } else {
-            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {sel_entity:?}");
         }
     }
 }
@@ -319,18 +319,18 @@ pub fn transform_rotation(
     let handle_entity = drag.target();
 
     let Ok(parent_entity) = q_parents.get(handle_entity) else {
-        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Parent of Handle Entity: {handle_entity:?}");
         return;
     };
     let parent_entity = parent_entity.parent();
 
     let Ok(gizmo_transform) = q_transform.get(handle_entity) else {
-        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {:?}", handle_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Handle Entity: {handle_entity:?}");
         return;
     };
 
     let Ok(camera_transform) = q_transform.get(camera_entity) else {
-        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {:?}", camera_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Camera Entity: {camera_entity:?}");
         return;
     };
 
@@ -390,7 +390,7 @@ pub fn transform_rotation(
     if let Ok(mut parent_transform_local) = q_local_transform.get_mut(parent_entity) {
         parent_transform_local.rotate(Quat::from_axis_angle(axis_1, angle_diff));
     } else {
-        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {:?}", parent_entity);
+        log::warn!("TransformGizmo: Could not get Transform of Parent Entity: {parent_entity:?}");
     }
 
     // Set the Transformation to the connected Object
@@ -399,7 +399,7 @@ pub fn transform_rotation(
             selection_transform_local.rotate(Quat::from_axis_angle(axis_1, angle_diff));
             settings.is_dragging = true;
         } else {
-            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {:?}", sel_entity);
+            log::warn!("TransformGizmo: Could not get Transform of selected Entity: {sel_entity:?}");
         }
     }
 }
